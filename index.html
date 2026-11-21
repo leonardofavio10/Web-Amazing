@@ -1,0 +1,1051 @@
+```html
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amazing Repuestos | Importación de repuestos para servicio técnico y talleres</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            navy: {
+              950: '#040B1A',
+              900: '#061024',
+              850: '#091630',
+              800: '#0B1936',
+              700: '#102247',
+              600: '#183163'
+            },
+            gold: {
+              300: '#F9E18B',
+              400: '#F3D066',
+              500: '#D4AF37',
+              600: '#B59024',
+              700: '#8F6F15'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #061024;
+      color: #FFFFFF;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .gold-border {
+      border-color: rgba(212, 175, 55, 0.25);
+    }
+    .gold-border-strong {
+      border-color: rgba(212, 175, 55, 0.55);
+    }
+    .gold-glow {
+      box-shadow: 0 0 30px rgba(212, 175, 55, 0.14);
+    }
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #F9E18B 0%, #D4AF37 55%, #B59024 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .gold-btn {
+      background: linear-gradient(135deg, #F3D066 0%, #D4AF37 60%, #B59024 100%);
+      color: #040B1A;
+    }
+    .gold-btn:hover {
+      background: linear-gradient(135deg, #F9E18B 0%, #E0BC44 60%, #C49D2B 100%);
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #040B1A;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #183163;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #D4AF37;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-gold-500 selection:text-navy-950">
+
+  <!-- TOP BAR: COTIZACIÓN USDT EN VIVO -->
+  <div class="bg-navy-950 border-b gold-border text-xs py-2 px-4">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-3 flex-wrap">
+        <span class="inline-flex items-center gap-1.5 font-mono font-semibold text-gold-400">
+          <span id="api-status-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          USDT VIVO: <span id="top-usdt-rate" class="text-white">$1.220 ARS</span>
+        </span>
+        <span id="api-source-label" class="text-slate-400 hidden sm:inline font-mono text-[11px]">Sincronizando API...</span>
+        <button onclick="fetchLiveUSDT(true)" class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-navy-800 hover:bg-navy-700 text-gold-400 border gold-border transition text-[11px] font-medium">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Actualizar API
+        </button>
+      </div>
+      <div class="flex items-center gap-4 text-slate-300">
+        <span class="hidden md:inline">Envíos a todo el país · Retiro en sucursal Salta</span>
+        <span class="text-gold-400 font-semibold">Exclusivo Gremio</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR PRINCIPAL -->
+  <header class="sticky top-0 z-40 bg-navy-900/95 backdrop-blur-md border-b gold-border">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+      <!-- LOGO -->
+      <a href="#" onclick="switchView('home'); return false;" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-navy-800 border gold-border-strong flex items-center justify-center gold-glow group-hover:scale-105 transition">
+          <span class="font-extrabold text-lg gold-gradient-text tracking-tighter">AR</span>
+        </div>
+        <div>
+          <span class="font-extrabold text-lg tracking-tight text-white block leading-none">AMAZING <span class="text-gold-400">REPUESTOS</span></span>
+          <span class="text-[10px] uppercase tracking-widest text-slate-400 font-medium">Importación Directa B2B</span>
+        </div>
+      </a>
+
+      <!-- NAVEGACIÓN -->
+      <nav class="hidden md:flex items-center gap-1 bg-navy-950/70 p-1 rounded-xl border gold-border">
+        <button id="nav-home" onclick="switchView('home')" class="px-4 py-1.5 rounded-lg text-sm font-semibold transition bg-navy-800 text-gold-400">
+          Inicio
+        </button>
+        <button id="nav-catalog" onclick="switchView('catalog')" class="px-4 py-1.5 rounded-lg text-sm font-semibold transition text-slate-300 hover:text-white">
+          Catálogo y Precios
+        </button>
+        <a href="#garantias" onclick="switchView('home')" class="px-4 py-1.5 rounded-lg text-sm font-semibold text-slate-300 hover:text-white transition">
+          Garantía y Envíos
+        </a>
+        <a href="#faq" onclick="switchView('home')" class="px-4 py-1.5 rounded-lg text-sm font-semibold text-slate-300 hover:text-white transition">
+          Preguntas Frecuentes
+        </a>
+      </nav>
+
+      <!-- ACCIONES DERECHA -->
+      <div class="flex items-center gap-2.5">
+        <button onclick="openCartDrawer()" class="relative inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-navy-800 hover:bg-navy-700 border gold-border-strong text-sm font-semibold text-white transition">
+          <svg class="w-4 h-4 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          <span class="hidden sm:inline">Mi Pedido</span>
+          <span id="cart-badge" class="px-1.5 py-0.5 text-xs font-mono font-bold rounded-md gold-btn">0</span>
+        </button>
+
+        <button onclick="openAdminModal()" title="Panel Administrador Rápido" class="p-2 rounded-xl bg-navy-800 hover:bg-navy-700 border gold-border text-gold-400 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- NAVEGACIÓN MÓVIL -->
+    <div class="flex md:hidden border-t gold-border bg-navy-950/90 px-4 py-2 gap-2">
+      <button onclick="switchView('home')" id="mob-nav-home" class="flex-1 py-1.5 rounded-lg text-xs font-bold bg-navy-800 text-gold-400">Inicio</button>
+      <button onclick="switchView('catalog')" id="mob-nav-catalog" class="flex-1 py-1.5 rounded-lg text-xs font-bold text-slate-300">Catálogo Mayorista</button>
+    </div>
+  </header>
+
+  <!-- ========================================================= -->
+  <!-- VISTA 1: LANDING PAGE INSTITUCIONAL (ESTILO B2B MAYORISTA) -->
+  <!-- ========================================================= -->
+  <main id="view-home" class="flex-1">
+    <!-- HERO SECTION -->
+    <section class="relative overflow-hidden py-16 md:py-24 px-4 border-b gold-border">
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-navy-700/45 via-navy-900 to-navy-950 -z-10"></div>
+      <div class="max-w-6xl mx-auto text-center">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-navy-800/90 border gold-border-strong text-xs font-semibold text-gold-400 mb-6">
+          <span class="w-1.5 h-1.5 rounded-full bg-gold-400"></span>
+          Lista de precios abierta · Sin registro previo
+        </div>
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white leading-tight max-w-4xl mx-auto">
+          Importación de repuestos para <span class="gold-gradient-text">servicio técnico y talleres</span>
+        </h1>
+        <p class="mt-6 text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          Abastecimiento mayorista directo en módulos OLED/Incell, baterías certificadas, tapas traseras, flex e insumos. Precios en USD/USDT con stock actualizado al día y despachos a todo el país.
+        </p>
+
+        <!-- CTAs PRINCIPALES -->
+        <div class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <button onclick="switchView('catalog')" class="w-full sm:w-auto px-8 py-4 rounded-xl gold-btn font-extrabold text-sm sm:text-base shadow-lg hover:scale-[1.02] transition flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+            Ver catálogo con precios
+          </button>
+          <a id="hero-whatsapp-btn" href="https://wa.me/5493870000000?text=Hola%20Amazing%20Repuestos,%20soy%20t%C3%A9cnico/taller%20y%20quiero%20consultar%20por%20repuestos." target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-navy-800 hover:bg-navy-700 border gold-border-strong text-white font-bold text-sm sm:text-base transition flex items-center justify-center gap-2">
+            <svg class="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z"/></svg>
+            Hablar con un asesor
+          </a>
+        </div>
+
+        <!-- MÉTRICAS RÁPIDAS -->
+        <div class="mt-14 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+          <div class="bg-navy-800/60 border gold-border rounded-2xl p-4">
+            <div class="font-mono text-2xl font-bold text-gold-400">+500</div>
+            <div class="text-xs text-slate-300 mt-1">SKUs en stock permanente</div>
+          </div>
+          <div class="bg-navy-800/60 border gold-border rounded-2xl p-4">
+            <div class="font-mono text-2xl font-bold text-gold-400">3 a 6 Meses</div>
+            <div class="text-xs text-slate-300 mt-1">Garantía real de gremio</div>
+          </div>
+          <div class="bg-navy-800/60 border gold-border rounded-2xl p-4">
+            <div class="font-mono text-2xl font-bold text-gold-400">24 hs</div>
+            <div class="text-xs text-slate-300 mt-1">Despacho nacional rápido</div>
+          </div>
+          <div class="bg-navy-800/60 border gold-border rounded-2xl p-4">
+            <div class="font-mono text-2xl font-bold text-gold-400">USDT / ARS</div>
+            <div class="text-xs text-slate-300 mt-1">Múltiples medios de pago</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACCESO RÁPIDO POR CATEGORÍA -->
+    <section class="py-16 px-4 max-w-7xl mx-auto">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-gold-400">Líneas de Importación</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Explorá por rubro técnico</h2>
+        </div>
+        <button onclick="switchView('catalog')" class="text-sm font-bold text-gold-400 hover:text-gold-300 flex items-center gap-1">
+          Abrir lista completa →
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <button onclick="goToCategory('Módulos')" class="group bg-navy-800/70 hover:bg-navy-800 border gold-border hover:gold-border-strong rounded-2xl p-5 text-left transition">
+          <div class="w-10 h-10 rounded-xl bg-navy-900 border gold-border flex items-center justify-center text-gold-400 mb-3 group-hover:scale-110 transition">📱</div>
+          <div class="font-bold text-white text-sm">Módulos / Pantallas</div>
+          <div class="text-xs text-slate-400 mt-1">OLED, Incell y Original</div>
+        </button>
+        <button onclick="goToCategory('Baterías')" class="group bg-navy-800/70 hover:bg-navy-800 border gold-border hover:gold-border-strong rounded-2xl p-5 text-left transition">
+          <div class="w-10 h-10 rounded-xl bg-navy-900 border gold-border flex items-center justify-center text-gold-400 mb-3 group-hover:scale-110 transition">🔋</div>
+          <div class="font-bold text-white text-sm">Baterías</div>
+          <div class="text-xs text-slate-400 mt-1">Celdas y alta capacidad</div>
+        </button>
+        <button onclick="goToCategory('Tapas y Chasis')" class="group bg-navy-800/70 hover:bg-navy-800 border gold-border hover:gold-border-strong rounded-2xl p-5 text-left transition">
+          <div class="w-10 h-10 rounded-xl bg-navy-900 border gold-border flex items-center justify-center text-gold-400 mb-3 group-hover:scale-110 transition">🛡️</div>
+          <div class="font-bold text-white text-sm">Tapas y Chasis</div>
+          <div class="text-xs text-slate-400 mt-1">Con aro grande y logos</div>
+        </button>
+        <button onclick="goToCategory('Flex y Pines')" class="group bg-navy-800/70 hover:bg-navy-800 border gold-border hover:gold-border-strong rounded-2xl p-5 text-left transition">
+          <div class="w-10 h-10 rounded-xl bg-navy-900 border gold-border flex items-center justify-center text-gold-400 mb-3 group-hover:scale-110 transition">🔌</div>
+          <div class="font-bold text-white text-sm">Flex y Pines</div>
+          <div class="text-xs text-slate-400 mt-1">Carga, FaceID y botones</div>
+        </button>
+        <button onclick="goToCategory('Cámaras')" class="group bg-navy-800/70 hover:bg-navy-800 border gold-border hover:gold-border-strong rounded-2xl p-5 text-left transition">
+          <div class="w-10 h-10 rounded-xl bg-navy-900 border gold-border flex items-center justify-center text-gold-400 mb-3 group-hover:scale-110 transition">📷</div>
+          <div class="font-bold text-white text-sm">Cámaras y Lentes</div>
+          <div class="text-xs text-slate-400 mt-1">Traseras, frontales y visores</div>
+        </button>
+        <button onclick="goToCategory('Herramientas')" class="group bg-navy-800/70 hover:bg-navy-800 border gold-border hover:gold-border-strong rounded-2xl p-5 text-left transition">
+          <div class="w-10 h-10 rounded-xl bg-navy-900 border gold-border flex items-center justify-center text-gold-400 mb-3 group-hover:scale-110 transition">🛠️</div>
+          <div class="font-bold text-white text-sm">Herramientas</div>
+          <div class="text-xs text-slate-400 mt-1">Programadoras e insumos</div>
+        </button>
+      </div>
+    </section>
+
+    <!-- PILARES DE CONFIANZA -->
+    <section id="garantias" class="py-16 px-4 bg-navy-950/60 border-y gold-border">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <span class="text-xs font-mono uppercase tracking-widest text-gold-400">Respaldo Mayorista</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">¿Por qué elegirnos como tu proveedor?</h2>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="bg-navy-800/80 border gold-border rounded-2xl p-7">
+            <div class="w-12 h-12 rounded-xl bg-navy-900 border gold-border-strong flex items-center justify-center text-gold-400 mb-5">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            </div>
+            <h3 class="text-lg font-bold text-white">Garantía de 3 y 6 meses</h3>
+            <p class="text-sm text-slate-300 mt-2 leading-relaxed">
+              Todos nuestros repuestos cuentan con respaldo real. ¿Pediste el modelo equivocado o no era la falla del equipo? Mientras no esté instalado, lo cambiamos o generamos nota de crédito.
+            </p>
+          </div>
+
+          <div class="bg-navy-800/80 border gold-border rounded-2xl p-7">
+            <div class="w-12 h-12 rounded-xl bg-navy-900 border gold-border-strong flex items-center justify-center text-gold-400 mb-5">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <h3 class="text-lg font-bold text-white">Logística ágil y despachos</h3>
+            <p class="text-sm text-slate-300 mt-2 leading-relaxed">
+              Entregas en el día mediante cadetería propia en Salta Capital, retiro directo en punto de entrega o despacho inmediato por el transporte de tu preferencia a todo el país.
+            </p>
+          </div>
+
+          <div class="bg-navy-800/80 border gold-border rounded-2xl p-7">
+            <div class="w-12 h-12 rounded-xl bg-navy-900 border gold-border-strong flex items-center justify-center text-gold-400 mb-5">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <h3 class="text-lg font-bold text-white">Asesoramiento técnico directo</h3>
+            <p class="text-sm text-slate-300 mt-2 leading-relaxed">
+              Hablás directo con especialistas del rubro. Te ayudamos a identificar compatibilidades, calidades de pantalla y disponibilidad exacta antes de cerrar tu pedido.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PREGUNTAS FRECUENTES -->
+    <section id="faq" class="py-16 px-4 max-w-4xl mx-auto">
+      <div class="text-center mb-10">
+        <span class="text-xs font-mono uppercase tracking-widest text-gold-400">Operatoria Comercial</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Preguntas frecuentes</h2>
+      </div>
+
+      <div class="space-y-3">
+        <details class="group bg-navy-800/70 border gold-border rounded-xl p-5" open>
+          <summary class="font-bold text-white cursor-pointer flex items-center justify-between list-none">
+            <span>¿Cómo realizo mi pedido?</span>
+            <span class="text-gold-400 font-mono text-lg group-open:rotate-45 transition">+</span>
+          </summary>
+          <p class="text-sm text-slate-300 mt-3 leading-relaxed">
+            Entrá a la pestaña <strong>Catálogo y Precios</strong>, filtrá los repuestos que necesitás y agregalos a <strong>Mi Pedido</strong>. Al finalizar, tocás <em>Enviar pedido por WhatsApp</em> y un asesor valida stock y coordina el pago y entrega al instante.
+          </p>
+        </details>
+
+        <details class="group bg-navy-800/70 border gold-border rounded-xl p-5">
+          <summary class="font-bold text-white cursor-pointer flex items-center justify-between list-none">
+            <span>¿Venden al público o solo al gremio?</span>
+            <span class="text-gold-400 font-mono text-lg group-open:rotate-45 transition">+</span>
+          </summary>
+          <p class="text-sm text-slate-300 mt-3 leading-relaxed">
+            Nuestra lista mayorista está orientada a talleres de reparación, locales de servicio técnico y revendedores de todo el país. Los precios son públicos y no requieren registro previo para consultarlos rápido en mostrador.
+          </p>
+        </details>
+
+        <details class="group bg-navy-800/70 border gold-border rounded-xl p-5">
+          <summary class="font-bold text-white cursor-pointer flex items-center justify-between list-none">
+            <span>¿Qué medios de pago aceptan?</span>
+            <span class="text-gold-400 font-mono text-lg group-open:rotate-45 transition">+</span>
+          </summary>
+          <p class="text-sm text-slate-300 mt-3 leading-relaxed">
+            Podés abonar en efectivo pesos (al tipo de cambio USDT actualizado), dólares billete, transferencia bancaria o criptomonedas (USDT).
+          </p>
+        </details>
+
+        <details class="group bg-navy-800/70 border gold-border rounded-xl p-5">
+          <summary class="font-bold text-white cursor-pointer flex items-center justify-between list-none">
+            <span>¿Si el repuesto que pedí no era correcto, puedo cambiarlo?</span>
+            <span class="text-gold-400 font-mono text-lg group-open:rotate-45 transition">+</span>
+          </summary>
+          <p class="text-sm text-slate-300 mt-3 leading-relaxed">
+            Sí. Siempre que el repuesto conserve sus films originales, sellos de garantía y no haya sido instalado ni pegado, podés devolverlo y generamos una nota de crédito por el importe para tu próxima compra.
+          </p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================= -->
+  <!-- VISTA 2: CATÁLOGO MAYORISTA OPERATIVO (ALTA DENSIDAD)      -->
+  <!-- ========================================================= -->
+  <section id="view-catalog" class="hidden flex-1 py-8 px-4 max-w-7xl mx-auto w-full">
+    <!-- CABECERA DEL CATÁLOGO -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b gold-border">
+      <div>
+        <div class="flex items-center gap-2 text-xs font-mono text-gold-400 uppercase tracking-wider">
+          <span>Lista Mayorista en Vivo</span>
+          <span>•</span>
+          <span id="catalog-count">24 productos</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Catálogo de Repuestos e Insumos</h2>
+      </div>
+
+      <!-- SELECTOR DE VISUALIZACIÓN DE MONEDA -->
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="text-xs text-slate-400 mr-1">Mostrar precios en:</span>
+        <div class="inline-flex rounded-xl bg-navy-950 p-1 border gold-border">
+          <button onclick="setCurrencyMode('BOTH')" id="curr-BOTH" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-navy-800 text-gold-400 transition">USD + ARS</button>
+          <button onclick="setCurrencyMode('USD')" id="curr-USD" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white transition">Solo USD</button>
+          <button onclick="setCurrencyMode('ARS')" id="curr-ARS" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white transition">Solo ARS</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BARRA DE BÚSQUEDA Y FILTROS -->
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-12 gap-3">
+      <!-- BUSCADOR -->
+      <div class="md:col-span-5 relative">
+        <svg class="w-4 h-4 text-gold-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input id="search-input" type="text" oninput="renderCatalog()" placeholder="Buscar modelo, SKU o calidad (ej: iPhone 13 OLED, A54, JCID)..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-navy-800 border gold-border focus:gold-border-strong focus:outline-none text-sm text-white placeholder-slate-400" />
+      </div>
+
+      <!-- FILTRO MARCA -->
+      <div class="md:col-span-3">
+        <select id="filter-brand" onchange="renderCatalog()" class="w-full px-3.5 py-2.5 rounded-xl bg-navy-800 border gold-border focus:outline-none text-sm text-white">
+          <option value="ALL">Todas las marcas</option>
+          <option value="iPhone">Apple / iPhone</option>
+          <option value="Samsung">Samsung</option>
+          <option value="Motorola">Motorola</option>
+          <option value="Xiaomi">Xiaomi</option>
+          <option value="Herramientas">Herramientas / Insumos</option>
+        </select>
+      </div>
+
+      <!-- FILTRO CATEGORÍA -->
+      <div class="md:col-span-4">
+        <select id="filter-category" onchange="renderCatalog()" class="w-full px-3.5 py-2.5 rounded-xl bg-navy-800 border gold-border focus:outline-none text-sm text-white">
+          <option value="ALL">Todas las categorías</option>
+          <option value="Módulos">Módulos / Pantallas</option>
+          <option value="Baterías">Baterías</option>
+          <option value="Tapas y Chasis">Tapas y Chasis</option>
+          <option value="Flex y Pines">Flex y Pines de Carga</option>
+          <option value="Cámaras">Cámaras y Lentes</option>
+          <option value="Herramientas">Herramientas y Programadoras</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- TABLA ESCRITORIO -->
+    <div class="mt-6 hidden md:block overflow-x-auto rounded-2xl border gold-border bg-navy-800/50">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-navy-950/90 border-b gold-border text-[11px] font-mono uppercase tracking-wider text-gold-400">
+            <th class="py-3.5 px-4">SKU</th>
+            <th class="py-3.5 px-4">Repuesto / Modelo</th>
+            <th class="py-3.5 px-4">Calidad</th>
+            <th class="py-3.5 px-4">Stock</th>
+            <th class="py-3.5 px-4 text-right">Precio Gremio</th>
+            <th class="py-3.5 px-4 text-right">Agregar</th>
+          </tr>
+        </thead>
+        <tbody id="catalog-table-body" class="divide-y divide-white/5 text-sm"></tbody>
+      </table>
+    </div>
+
+    <!-- TARJETAS MÓVIL -->
+    <div id="catalog-mobile-cards" class="mt-6 md:hidden space-y-3"></div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-navy-950 border-t gold-border py-10 px-4 mt-16">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div>
+        <div class="font-extrabold text-lg text-white">AMAZING <span class="text-gold-400">REPUESTOS</span></div>
+        <p class="text-xs text-slate-400 mt-1">Importación de repuestos para servicio técnico y talleres · Salta Capital, Argentina.</p>
+      </div>
+      <div class="flex flex-wrap gap-6 text-xs text-slate-300">
+        <div>
+          <span class="text-gold-400 font-bold block">Horarios de Atención</span>
+          Lun a Vie: 9:30 a 13:30 y 17:00 a 20:30 · Sáb: 10:00 a 13:30
+        </div>
+        <div>
+          <span class="text-gold-400 font-bold block">Contacto Directo</span>
+          WhatsApp Gremio · Envíos a todo el país
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================= -->
+  <!-- DRAWER: MI PEDIDO MAYORISTA                               -->
+  <!-- ========================================================= -->
+  <div id="cart-drawer" class="fixed inset-0 z-50 hidden">
+    <div onclick="closeCartDrawer()" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-navy-900 border-l gold-border-strong flex flex-col shadow-2xl">
+      <div class="p-5 border-b gold-border flex items-center justify-between">
+        <div>
+          <h3 class="font-extrabold text-lg text-white">Mi Pedido Mayorista</h3>
+          <p class="text-xs text-slate-400">Armá tu lista y enviala directo por WhatsApp</p>
+        </div>
+        <button onclick="closeCartDrawer()" class="p-2 rounded-lg bg-navy-800 text-slate-300 hover:text-white">✕</button>
+      </div>
+
+      <!-- ITEMS DEL CARRITO -->
+      <div id="cart-items-container" class="flex-1 overflow-y-auto p-5 space-y-3"></div>
+
+      <!-- OPCIONES Y TOTALES -->
+      <div class="p-5 bg-navy-950 border-t gold-border space-y-4">
+        <div class="grid grid-cols-2 gap-2.5 text-xs">
+          <div>
+            <label class="text-slate-400 block mb-1">Entrega</label>
+            <select id="order-delivery" class="w-full px-2.5 py-2 rounded-lg bg-navy-800 border gold-border text-white">
+              <option value="Retiro en Sucursal">Retiro en Sucursal</option>
+              <option value="Moto en el día">Moto en el día</option>
+              <option value="Envío Nacional">Envío Nacional (Transporte)</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-slate-400 block mb-1">Medio de Pago</label>
+            <select id="order-payment" class="w-full px-2.5 py-2 rounded-lg bg-navy-800 border gold-border text-white">
+              <option value="Transferencia ARS">Transferencia ARS</option>
+              <option value="Efectivo USD">Efectivo USD</option>
+              <option value="Efectivo ARS">Efectivo ARS</option>
+              <option value="Cripto USDT">Cripto USDT</option>
+            </select>
+          </div>
+        </div>
+
+        <input id="order-client-name" type="text" placeholder="Nombre de tu taller o técnico (opcional)" class="w-full px-3 py-2 rounded-lg bg-navy-800 border gold-border text-xs text-white placeholder-slate-400" />
+
+        <div class="flex items-center justify-between pt-2 border-t border-white/10">
+          <span class="text-xs text-slate-400">Total Estimado:</span>
+          <div class="text-right font-mono">
+            <div id="cart-total-usd" class="text-lg font-extrabold text-gold-400">$0.00 USD</div>
+            <div id="cart-total-ars" class="text-xs text-slate-300">$0 ARS</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <button onclick="copyOrderText()" class="col-span-1 py-3 rounded-xl bg-navy-800 hover:bg-navy-700 border gold-border text-xs font-bold text-white transition">
+            Copiar lista
+          </button>
+          <button onclick="sendOrderWhatsApp()" class="col-span-2 py-3 rounded-xl gold-btn text-xs sm:text-sm font-extrabold transition flex items-center justify-center gap-1.5">
+            Enviar por WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL: ADMINISTRADOR RÁPIDO                               -->
+  <!-- ========================================================= -->
+  <div id="admin-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+    <div onclick="closeAdminModal()" class="absolute inset-0 bg-black/75 backdrop-blur-sm"></div>
+    <div class="relative w-full max-w-2xl bg-navy-900 border gold-border-strong rounded-2xl p-6 max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div class="flex items-center justify-between pb-4 border-b gold-border">
+        <div>
+          <h3 class="font-extrabold text-lg text-white">Panel Administrador Rápido</h3>
+          <p class="text-xs text-slate-400">Configurá cotización USDT, WhatsApp y agregá repuestos</p>
+        </div>
+        <button onclick="closeAdminModal()" class="p-2 rounded-lg bg-navy-800 text-slate-300 hover:text-white">✕</button>
+      </div>
+
+      <!-- CONFIGURACIÓN COTIZACIÓN Y WHATSAPP -->
+      <div class="mt-5 grid sm:grid-cols-3 gap-3 bg-navy-950/80 p-4 rounded-xl border gold-border">
+        <div>
+          <label class="text-[11px] text-slate-400 block mb-1">Modo Cotización</label>
+          <select id="admin-rate-mode" onchange="toggleRateMode()" class="w-full px-3 py-2 rounded-lg bg-navy-800 border gold-border text-xs text-white">
+            <option value="AUTO">API USDT en Vivo</option>
+            <option value="MANUAL">Manual Fija</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-[11px] text-slate-400 block mb-1">Valor / Spread ARS</label>
+          <input id="admin-rate-value" type="number" onchange="updateManualOrSpread()" class="w-full px-3 py-2 rounded-lg bg-navy-800 border gold-border text-xs text-white font-mono" placeholder="0" />
+        </div>
+        <div>
+          <label class="text-[11px] text-slate-400 block mb-1">WhatsApp Pedidos (549...)</label>
+          <input id="admin-whatsapp" type="text" onchange="saveAdminSettings()" class="w-full px-3 py-2 rounded-lg bg-navy-800 border gold-border text-xs text-white font-mono" placeholder="5493870000000" />
+        </div>
+      </div>
+
+      <!-- AGREGAR NUEVO REPUESTO -->
+      <form onsubmit="addNewProduct(event)" class="mt-5 space-y-3">
+        <h4 class="text-xs font-mono uppercase tracking-wider text-gold-400">+ Agregar nuevo repuesto al catálogo</h4>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <input id="new-sku" required type="text" placeholder="SKU (ej: MOD-IP15P)" class="px-3 py-2 rounded-lg bg-navy-800 border gold-border text-xs text-white font-mono" />
+          <input id="new-name" required type="text" placeholder="Nombre (ej: Módulo iPhone 15 Pro)" class="px-3 py-2 rounded-lg bg-navy-800 border gold-border text-xs text-white" />
+          <select id="new-brand" class="px-3 py-2 rounded-lg bg-navy-800 border gold-border text-xs text-white">
+            <option value="iPhone">iPhone</option>
+            <option value="Samsung">Samsung</option>
+            <option value="Motorola">Motorola</option>
+            <option value="Xiaomi">Xiaomi</option>
+            <option value="Herramientas">Herramientas</option>
+          </select>
+          <select id="new-category" class="px-3 py-2 rounded-lg bg-navy-800 border gold-border text-xs text-white">
+            <option value="Módulos">Módulos</option>
+            <option value="Baterías">Baterías</option>
+            <option value="Tapas y Chasis">Tapas y Chasis</option>
+            <option value="Flex y Pines">Flex y Pines</option>
+            <option value="Cámaras">Cámaras</option>
+            <option value="Herramientas">Herramientas</option>
+          </select>
+          <input id="new-quality" required type="text" placeholder="Calidad (ej: Soft OLED / Original)" class="px-3 py-2 rounded-lg bg-navy-800 border gold-border text-xs text-white" />
+          <input id="new-price" required type="number" step="0.01" placeholder="Precio USD (ej: 65)" class="px-3 py-2 rounded-lg bg-navy-800 border gold-border text-xs text-white font-mono" />
+        </div>
+        <div class="flex justify-between items-center pt-2">
+          <button type="button" onclick="resetDefaultProducts()" class="text-xs text-rose-400 hover:underline">Restaurar lista de fábrica</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl gold-btn text-xs font-extrabold">Guardar Repuesto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICACIÓN -->
+  <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 hidden px-5 py-3 rounded-xl bg-navy-800 border gold-border-strong text-xs font-bold text-gold-400 shadow-2xl"></div>
+
+  <script>
+    // =========================================================
+    // DATOS INICIALES DEL CATÁLOGO MAYORISTA
+    // =========================================================
+    const DEFAULT_PRODUCTS = [
+      { sku: 'MOD-IP11-INC', name: 'Módulo iPhone 11', brand: 'iPhone', category: 'Módulos', quality: 'Incell JK', priceUSD: 19.50, stock: 'Disponible' },
+      { sku: 'MOD-IP12-OLD', name: 'Módulo iPhone 12 / 12 Pro', brand: 'iPhone', category: 'Módulos', quality: 'Soft OLED', priceUSD: 44.00, stock: 'Disponible' },
+      { sku: 'MOD-IP13-OLD', name: 'Módulo iPhone 13', brand: 'iPhone', category: 'Módulos', quality: 'Soft OLED', priceUSD: 52.00, stock: 'Disponible' },
+      { sku: 'MOD-IP13PM-ORG', name: 'Módulo iPhone 13 Pro Max', brand: 'iPhone', category: 'Módulos', quality: 'OLED 120Hz', priceUSD: 98.00, stock: 'Pocas unidades' },
+      { sku: 'MOD-IP14PM-OLD', name: 'Módulo iPhone 14 Pro Max', brand: 'iPhone', category: 'Módulos', quality: 'Soft OLED', priceUSD: 115.00, stock: 'Disponible' },
+      { sku: 'MOD-IP15-OLD', name: 'Módulo iPhone 15', brand: 'iPhone', category: 'Módulos', quality: 'Soft OLED', priceUSD: 89.00, stock: 'Disponible' },
+      { sku: 'MOD-IP16PM-ORG', name: 'Módulo iPhone 16 Pro Max', brand: 'iPhone', category: 'Módulos', quality: 'Original Pull', priceUSD: 245.00, stock: 'Consultar' },
+      { sku: 'BAT-IP11-SC', name: 'Batería iPhone 11 (Sin cartel / Alta Cap.)', brand: 'iPhone', category: 'Baterías', quality: 'Certificada CE', priceUSD: 12.50, stock: 'Disponible' },
+      { sku: 'BAT-IP12P-SC', name: 'Batería iPhone 12 / 12 Pro', brand: 'iPhone', category: 'Baterías', quality: 'Certificada CE', priceUSD: 14.00, stock: 'Disponible' },
+      { sku: 'BAT-IP13-SC', name: 'Batería iPhone 13', brand: 'iPhone', category: 'Baterías', quality: 'Certificada CE', priceUSD: 15.50, stock: 'Disponible' },
+      { sku: 'BAT-IP14PM-SC', name: 'Batería iPhone 14 Pro Max', brand: 'iPhone', category: 'Baterías', quality: 'Certificada CE', priceUSD: 18.00, stock: 'Disponible' },
+      { sku: 'TAP-IP13P-AG', name: 'Tapa Trasera iPhone 13 Pro (Aro Grande)', brand: 'iPhone', category: 'Tapas y Chasis', quality: 'Vidrio Templado', priceUSD: 7.50, stock: 'Disponible' },
+      { sku: 'TAP-IP14PM-AG', name: 'Tapa Trasera iPhone 14 Pro Max (Aro Grande)', brand: 'iPhone', category: 'Tapas y Chasis', quality: 'Vidrio Templado', priceUSD: 8.50, stock: 'Disponible' },
+      { sku: 'FLX-IP11-CRG', name: 'Flex de Carga + Micrófono iPhone 11', brand: 'iPhone', category: 'Flex y Pines', quality: 'Original OEM', priceUSD: 8.00, stock: 'Disponible' },
+      { sku: 'FLX-IP13-CRG', name: 'Flex de Carga iPhone 13', brand: 'iPhone', category: 'Flex y Pines', quality: 'Original OEM', priceUSD: 11.50, stock: 'Disponible' },
+      { sku: 'CAM-IP13-TR', name: 'Cámara Trasera Dual iPhone 13', brand: 'iPhone', category: 'Cámaras', quality: 'Original Pull', priceUSD: 36.00, stock: 'Disponible' },
+      { sku: 'MOD-SAM-A54', name: 'Módulo Samsung Galaxy A54 5G (C/Marco)', brand: 'Samsung', category: 'Módulos', quality: 'OLED', priceUSD: 46.00, stock: 'Disponible' },
+      { sku: 'MOD-SAM-A34', name: 'Módulo Samsung Galaxy A34 5G', brand: 'Samsung', category: 'Módulos', quality: 'OLED', priceUSD: 41.00, stock: 'Disponible' },
+      { sku: 'MOD-SAM-S22U', name: 'Módulo Samsung Galaxy S22 Ultra (C/Marco)', brand: 'Samsung', category: 'Módulos', quality: 'Service Pack', priceUSD: 168.00, stock: 'Pocas unidades' },
+      { sku: 'MOD-MOT-G54', name: 'Módulo Motorola Moto G54 / G84', brand: 'Motorola', category: 'Módulos', quality: 'Original', priceUSD: 24.00, stock: 'Disponible' },
+      { sku: 'MOD-MOT-E40', name: 'Módulo Motorola Moto E40 / E32', brand: 'Motorola', category: 'Módulos', quality: 'Incell', priceUSD: 16.50, stock: 'Disponible' },
+      { sku: 'MOD-XIA-RN12', name: 'Módulo Xiaomi Redmi Note 12 4G', brand: 'Xiaomi', category: 'Módulos', quality: 'OLED', priceUSD: 29.00, stock: 'Disponible' },
+      { sku: 'HER-JCID-V1SE', name: 'Programadora JCID V1SE WiFi + Placas', brand: 'Herramientas', category: 'Herramientas', quality: 'Original JCID', priceUSD: 85.00, stock: 'Disponible' },
+      { sku: 'HER-I2C-KC02', name: 'Programadora Batería i2C KC02', brand: 'Herramientas', category: 'Herramientas', quality: 'Original i2C', priceUSD: 54.00, stock: 'Disponible' }
+    ];
+
+    // =========================================================
+    // ESTADO GLOBAL
+    // =========================================================
+    let products = JSON.parse(localStorage.getItem('amazing_products')) || [...DEFAULT_PRODUCTS];
+    let cart = JSON.parse(localStorage.getItem('amazing_cart')) || [];
+    let currencyMode = 'BOTH'; // BOTH | USD | ARS
+    let settings = JSON.parse(localStorage.getItem('amazing_settings')) || {
+      rateMode: 'AUTO',
+      liveRate: 1220,
+      spread: 0,
+      manualRate: 1220,
+      whatsapp: '5493870000000'
+    };
+
+    function getEffectiveRate() {
+      if (settings.rateMode === 'MANUAL') return Number(settings.manualRate) || 1220;
+      return (Number(settings.liveRate) || 1220) + (Number(settings.spread) || 0);
+    }
+
+    function formatARS(val) {
+      return '$' + Math.round(val).toLocaleString('es-AR');
+    }
+
+    function formatUSD(val) {
+      return '$' + Number(val).toFixed(2);
+    }
+
+    // =========================================================
+    // API COTIZACIÓN USDT EN VIVO (DolarApi + Fallback CriptoYa)
+    // =========================================================
+    async function fetchLiveUSDT(manualTrigger = false) {
+      const dot = document.getElementById('api-status-dot');
+      const label = document.getElementById('api-source-label');
+      if (settings.rateMode === 'MANUAL') {
+        updateRateUI('Modo Manual Fijo');
+        return;
+      }
+
+      dot.className = 'w-2 h-2 rounded-full bg-gold-400 animate-ping';
+      label.textContent = 'Consultando API USDT...';
+
+      try {
+        const res = await fetch('https://dolarapi.com/v1/dolares/cripto');
+        if (!res.ok) throw new Error('Error DolarApi');
+        const data = await res.json();
+        if (data && data.venta) {
+          settings.liveRate = Number(data.venta);
+          saveSettings();
+          const time = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+          updateRateUI(`DolarApi Cripto · ${time} hs`);
+          if (manualTrigger) showToast('Cotización USDT actualizada en vivo');
+          return;
+        }
+      } catch (e) {
+        try {
+          const res2 = await fetch('https://criptoya.com/api/usdt/ars/1');
+          const data2 = await res2.json();
+          const rate = data2.totalAsk || data2.ask;
+          if (rate) {
+            settings.liveRate = Number(rate);
+            saveSettings();
+            const time = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+            updateRateUI(`CriptoYa USDT · ${time} hs`);
+            if (manualTrigger) showToast('Cotización USDT actualizada (CriptoYa)');
+            return;
+          }
+        } catch (e2) {
+          dot.className = 'w-2 h-2 rounded-full bg-amber-400';
+          label.textContent = 'Última cotización guardada';
+        }
+      }
+    }
+
+    function updateRateUI(sourceText) {
+      const rate = getEffectiveRate();
+      document.getElementById('top-usdt-rate').textContent = `${formatARS(rate)} ARS`;
+      document.getElementById('api-source-label').textContent = sourceText;
+      document.getElementById('api-status-dot').className = 'w-2 h-2 rounded-full bg-emerald-400';
+      renderCatalog();
+      renderCart();
+    }
+
+    function saveSettings() {
+      localStorage.setItem('amazing_settings', JSON.stringify(settings));
+    }
+
+    // =========================================================
+    // NAVEGACIÓN ENTRE VISTAS
+    // =========================================================
+    function switchView(view) {
+      const home = document.getElementById('view-home');
+      const catalog = document.getElementById('view-catalog');
+      const navHome = document.getElementById('nav-home');
+      const navCat = document.getElementById('nav-catalog');
+      const mobHome = document.getElementById('mob-nav-home');
+      const mobCat = document.getElementById('mob-nav-catalog');
+
+      if (view === 'catalog') {
+        home.classList.add('hidden');
+        catalog.classList.remove('hidden');
+        navCat.className = 'px-4 py-1.5 rounded-lg text-sm font-semibold transition bg-navy-800 text-gold-400';
+        navHome.className = 'px-4 py-1.5 rounded-lg text-sm font-semibold transition text-slate-300 hover:text-white';
+        mobCat.className = 'flex-1 py-1.5 rounded-lg text-xs font-bold bg-navy-800 text-gold-400';
+        mobHome.className = 'flex-1 py-1.5 rounded-lg text-xs font-bold text-slate-300';
+        renderCatalog();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        catalog.classList.add('hidden');
+        home.classList.remove('hidden');
+        navHome.className = 'px-4 py-1.5 rounded-lg text-sm font-semibold transition bg-navy-800 text-gold-400';
+        navCat.className = 'px-4 py-1.5 rounded-lg text-sm font-semibold transition text-slate-300 hover:text-white';
+        mobHome.className = 'flex-1 py-1.5 rounded-lg text-xs font-bold bg-navy-800 text-gold-400';
+        mobCat.className = 'flex-1 py-1.5 rounded-lg text-xs font-bold text-slate-300';
+      }
+    }
+
+    function goToCategory(category) {
+      switchView('catalog');
+      document.getElementById('filter-category').value = category;
+      renderCatalog();
+    }
+
+    // =========================================================
+    // RENDERIZADO DEL CATÁLOGO
+    // =========================================================
+    function setCurrencyMode(mode) {
+      currencyMode = mode;
+      ['BOTH', 'USD', 'ARS'].forEach(m => {
+        const btn = document.getElementById('curr-' + m);
+        btn.className = m === mode
+          ? 'px-3 py-1.5 rounded-lg text-xs font-bold bg-navy-800 text-gold-400 transition'
+          : 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white transition';
+      });
+      renderCatalog();
+    }
+
+    function renderPriceBlock(priceUSD) {
+      const rate = getEffectiveRate();
+      const ars = priceUSD * rate;
+      if (currencyMode === 'USD') {
+        return `<div class="font-mono font-bold text-gold-400 text-base">${formatUSD(priceUSD)} USD</div>`;
+      }
+      if (currencyMode === 'ARS') {
+        return `<div class="font-mono font-bold text-white text-base">${formatARS(ars)} ARS</div>`;
+      }
+      return `
+        <div class="font-mono font-bold text-gold-400 text-sm">${formatUSD(priceUSD)} USD</div>
+        <div class="font-mono text-xs text-slate-300">${formatARS(ars)} ARS</div>
+      `;
+    }
+
+    function renderCatalog() {
+      const q = document.getElementById('search-input').value.toLowerCase().trim();
+      const brand = document.getElementById('filter-brand').value;
+      const category = document.getElementById('filter-category').value;
+
+      const filtered = products.filter(p => {
+        const matchQ = !q || p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q) || p.quality.toLowerCase().includes(q);
+        const matchBrand = brand === 'ALL' || p.brand === brand;
+        const matchCat = category === 'ALL' || p.category === category;
+        return matchQ && matchBrand && matchCat;
+      });
+
+      document.getElementById('catalog-count').textContent = `${filtered.length} productos`;
+
+      const tbody = document.getElementById('catalog-table-body');
+      const mobCards = document.getElementById('catalog-mobile-cards');
+
+      if (filtered.length === 0) {
+        const empty = `<div class="p-8 text-center text-slate-400 text-sm">No se encontraron repuestos con esos filtros.</div>`;
+        tbody.innerHTML = `<tr><td colspan="6">${empty}</td></tr>`;
+        mobCards.innerHTML = empty;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(p => {
+        const stockBadge = p.stock === 'Disponible'
+          ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+          : 'bg-amber-500/15 text-amber-300 border-amber-500/30';
+
+        return `
+          <tr class="hover:bg-navy-800/80 transition">
+            <td class="py-3.5 px-4 font-mono text-xs text-slate-400">${p.sku}</td>
+            <td class="py-3.5 px-4">
+              <div class="font-bold text-white">${p.name}</div>
+              <div class="text-[11px] text-slate-400">${p.brand} · ${p.category}</div>
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="px-2.5 py-1 rounded-md bg-navy-950 border gold-border text-xs font-medium text-gold-300">${p.quality}</span>
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="px-2.5 py-1 rounded-full border text-[11px] font-semibold ${stockBadge}">${p.stock}</span>
+            </td>
+            <td class="py-3.5 px-4 text-right">${renderPriceBlock(p.priceUSD)}</td>
+            <td class="py-3.5 px-4 text-right">
+              <button onclick="addToCart('${p.sku}')" class="px-3.5 py-2 rounded-lg gold-btn text-xs font-extrabold hover:scale-105 transition">
+                + Sumar
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      mobCards.innerHTML = filtered.map(p => `
+        <div class="bg-navy-800/80 border gold-border rounded-xl p-4 flex items-center justify-between gap-3">
+          <div class="min-w-0">
+            <div class="flex items-center gap-2 text-[10px] font-mono text-slate-400">
+              <span>${p.sku}</span>
+              <span>•</span>
+              <span class="text-gold-400">${p.quality}</span>
+            </div>
+            <div class="font-bold text-white text-sm mt-0.5 truncate">${p.name}</div>
+            <div class="mt-2">${renderPriceBlock(p.priceUSD)}</div>
+          </div>
+          <button onclick="addToCart('${p.sku}')" class="shrink-0 px-3.5 py-2.5 rounded-xl gold-btn text-xs font-extrabold">
+            + Sumar
+          </button>
+        </div>
+      `).join('');
+    }
+
+    // =========================================================
+    // CARRITO / PEDIDO MAYORISTA Y WHATSAPP
+    // =========================================================
+    function addToCart(sku) {
+      const prod = products.find(p => p.sku === sku);
+      if (!prod) return;
+      const existing = cart.find(i => i.sku === sku);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ ...prod, qty: 1 });
+      }
+      saveCart();
+      showToast(`Agregado: ${prod.name}`);
+    }
+
+    function updateQty(sku, delta) {
+      const item = cart.find(i => i.sku === sku);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) {
+        cart = cart.filter(i => i.sku !== sku);
+      }
+      saveCart();
+    }
+
+    function saveCart() {
+      localStorage.setItem('amazing_cart', JSON.stringify(cart));
+      renderCart();
+    }
+
+    function renderCart() {
+      const totalItems = cart.reduce((acc, i) => acc + i.qty, 0);
+      document.getElementById('cart-badge').textContent = totalItems;
+
+      const container = document.getElementById('cart-items-container');
+      if (cart.length === 0) {
+        container.innerHTML = `<div class="text-center text-slate-400 text-sm py-12">Tu lista de pedido está vacía.<br><span class="text-xs">Sumá repuestos desde el catálogo.</span></div>`;
+        document.getElementById('cart-total-usd').textContent = '$0.00 USD';
+        document.getElementById('cart-total-ars').textContent = '$0 ARS';
+        return;
+      }
+
+      const rate = getEffectiveRate();
+      let totalUSD = 0;
+
+      container.innerHTML = cart.map(item => {
+        const subUSD = item.priceUSD * item.qty;
+        totalUSD += subUSD;
+        return `
+          <div class="bg-navy-800/80 border gold-border rounded-xl p-3 flex items-center justify-between gap-3">
+            <div class="min-w-0">
+              <div class="font-bold text-white text-xs truncate">${item.name}</div>
+              <div class="text-[11px] text-slate-400 font-mono">${item.sku} · ${formatUSD(item.priceUSD)} c/u</div>
+              <div class="text-xs font-mono text-gold-400 font-bold mt-1">${formatUSD(subUSD)} USD (${formatARS(subUSD * rate)})</div>
+            </div>
+            <div class="flex items-center gap-1.5 bg-navy-950 rounded-lg p-1 border gold-border">
+              <button onclick="updateQty('${item.sku}', -1)" class="w-6 h-6 rounded text-slate-300 hover:text-white font-bold">-</button>
+              <span class="w-6 text-center font-mono text-xs font-bold text-white">${item.qty}</span>
+              <button onclick="updateQty('${item.sku}', 1)" class="w-6 h-6 rounded text-gold-400 hover:text-gold-300 font-bold">+</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('cart-total-usd').textContent = `${formatUSD(totalUSD)} USD`;
+      document.getElementById('cart-total-ars').textContent = `${formatARS(totalUSD * rate)} ARS (USDT $${Math.round(rate)})`;
+    }
+
+    function buildOrderMessage() {
+      if (cart.length === 0) return '';
+      const rate = getEffectiveRate();
+      const delivery = document.getElementById('order-delivery').value;
+      const payment = document.getElementById('order-payment').value;
+      const client = document.getElementById('order-client-name').value.trim();
+
+      let totalUSD = 0;
+      const lines = cart.map(i => {
+        const sub = i.priceUSD * i.qty;
+        totalUSD += sub;
+        return `• ${i.qty}x ${i.name} (${i.quality}) [${i.sku}] — ${formatUSD(sub)} USD`;
+      });
+
+      return [
+        `*PEDIDO MAYORISTA - AMAZING REPUESTOS*`,
+        client ? `Taller/Cliente: *${client}*` : null,
+        `Cotización ref. USDT: $${Math.round(rate)} ARS`,
+        ``,
+        ...lines,
+        ``,
+        `*Total: ${formatUSD(totalUSD)} USD (${formatARS(totalUSD * rate)} ARS)*`,
+        `Entrega: ${delivery}`,
+        `Pago: ${payment}`
+      ].filter(Boolean).join('\n');
+    }
+
+    function sendOrderWhatsApp() {
+      if (cart.length === 0) {
+        showToast('Agregá al menos un repuesto al pedido');
+        return;
+      }
+      const msg = encodeURIComponent(buildOrderMessage());
+      const phone = settings.whatsapp.replace(/\D/g, '') || '5493870000000';
+      window.open(`https://wa.me/${phone}?text=${msg}`, '_blank', 'noopener,noreferrer');
+    }
+
+    function copyOrderText() {
+      if (cart.length === 0) {
+        showToast('El pedido está vacío');
+        return;
+      }
+      const text = buildOrderMessage();
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Lista copiada al portapapeles');
+    }
+
+    function openCartDrawer() {
+      document.getElementById('cart-drawer').classList.remove('hidden');
+    }
+    function closeCartDrawer() {
+      document.getElementById('cart-drawer').classList.add('hidden');
+    }
+
+    // =========================================================
+    // PANEL ADMINISTRADOR RÁPIDO
+    // =========================================================
+    function openAdminModal() {
+      document.getElementById('admin-rate-mode').value = settings.rateMode;
+      document.getElementById('admin-rate-value').value = settings.rateMode === 'MANUAL' ? settings.manualRate : settings.spread;
+      document.getElementById('admin-whatsapp').value = settings.whatsapp;
+      const modal = document.getElementById('admin-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeAdminModal() {
+      const modal = document.getElementById('admin-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function toggleRateMode() {
+      settings.rateMode = document.getElementById('admin-rate-mode').value;
+      document.getElementById('admin-rate-value').value = settings.rateMode === 'MANUAL' ? settings.manualRate : settings.spread;
+      saveSettings();
+      if (settings.rateMode === 'AUTO') {
+        fetchLiveUSDT(true);
+      } else {
+        updateRateUI('Modo Manual Fijo');
+      }
+    }
+
+    function updateManualOrSpread() {
+      const val = Number(document.getElementById('admin-rate-value').value) || 0;
+      if (settings.rateMode === 'MANUAL') {
+        settings.manualRate = val;
+        updateRateUI('Modo Manual Fijo');
+      } else {
+        settings.spread = val;
+        updateRateUI(`API USDT + Spread ($${val})`);
+      }
+      saveSettings();
+    }
+
+    function saveAdminSettings() {
+      settings.whatsapp = document.getElementById('admin-whatsapp').value.trim();
+      saveSettings();
+      const phone = settings.whatsapp.replace(/\D/g, '') || '5493870000000';
+      const heroBtn = document.getElementById('hero-whatsapp-btn');
+      if (heroBtn) {
+        heroBtn.href = `https://wa.me/${phone}?text=${encodeURIComponent('Hola Amazing Repuestos, soy técnico/taller y quiero consultar por repuestos.')}`;
+      }
+      showToast('Configuración guardada');
+    }
+
+    function addNewProduct(e) {
+      e.preventDefault();
+      const item = {
+        sku: document.getElementById('new-sku').value.trim().toUpperCase(),
+        name: document.getElementById('new-name').value.trim(),
+        brand: document.getElementById('new-brand').value,
+        category: document.getElementById('new-category').value,
+        quality: document.getElementById('new-quality').value.trim(),
+        priceUSD: parseFloat(document.getElementById('new-price').value),
+        stock: 'Disponible'
+      };
+      products.unshift(item);
+      localStorage.setItem('amazing_products', JSON.stringify(products));
+      e.target.reset();
+      renderCatalog();
+      showToast('Repuesto agregado al catálogo');
+    }
+
+    function resetDefaultProducts() {
+      products = [...DEFAULT_PRODUCTS];
+      localStorage.setItem('amazing_products', JSON.stringify(products));
+      renderCatalog();
+      showToast('Lista restaurada');
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => t.classList.add('hidden'), 2600);
+    }
+
+    // INICIALIZACIÓN
+    updateRateUI('Sincronizando...');
+    fetchLiveUSDT();
+  </script>
+</body>
+</html>
+```
